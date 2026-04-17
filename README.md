@@ -113,17 +113,20 @@ A hands-on infrastructure project simulating a business IT environment with ente
 _Veeam backup copy job completed successfully to S3 Bucket (AWS) - 13.5 GB processed:_
 <p align="center">
 <img width="703" height="412" alt="image" src="https://github.com/user-attachments/assets/e50d54f7-fe77-4fe8-9244-26d20b67638e" />
+</p>
 
 _S3 Bucket (AWS):_
+<p align="center">
 <img width="772" height="128" alt="image" src="https://github.com/user-attachments/assets/5b1e030a-49de-453c-9c5c-06150c2d2d64" />
-
+</p>
 
 _Verified data upload via CLI command:_
 
 aws s3 ls s3://veeam-lab-backup-david-2026 --recursive --human-readable --summarize
+
+<p align="center">
 <img width="1050" height="196" alt="image" src="https://github.com/user-attachments/assets/0442381c-a76c-4369-a88b-5291124d1469" />
 </p>
-
 
 ### Cost Analysis
 
@@ -142,6 +145,16 @@ aws s3 ls s3://veeam-lab-backup-david-2026 --recursive --human-readable --summar
 ## Restore Drill Results
 
 Backups that are never tested are not backups — they are assumptions. Three restore drills were performed and documented to validate end-to-end recovery capability.
+
+_*Veeam inventory showing all Windows OS protected machines with agents deployed:*_
+<p align="center">
+<img width="1076" height="114" alt="image" src="https://github.com/user-attachments/assets/1d9890d6-0707-4a9e-b088-2fbf4c804fca" />
+</p>
+
+*Veeam inventory showing Linux/Ubuntu protected machine with agent deployed:*
+<p align="center">
+<img width="1077" height="87" alt="image" src="https://github.com/user-attachments/assets/bd15bc9d-7499-4fbe-8667-107c44338b43" />
+</p>
 
 ### Drill 1: File-Level Restore
 
@@ -162,6 +175,13 @@ Backups that are never tested are not backups — they are assumptions. Three re
 | **Method** | Veeam Recovery Media ISO → bare-metal restore to new VM |
 | **Recovery Time** | < 60 minutes |
 | **Outcome** | Hostname, IP, OS, SSH service all verified post-restore; machine fully operational |
+
+*Windows 11 - Restored verified operational after bare-metal restore:*
+<p align="center">
+<img width="1919" height="854" alt="image" src="https://github.com/user-attachments/assets/aa62e613-db68-44f5-8171-16369e79fdef" />
+</p>
+
+
 > **Detailed runbooks with step-by-step instructions:** [runbooks/](runbooks/)
 
 ---
