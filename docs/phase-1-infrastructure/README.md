@@ -2,7 +2,7 @@
 
 ## Overview
 
-This phase establishes the foundation for the entire lab environment: a segmented network with centralized identity management that mirrors a real small business IT infrastructure. Every subsequent phase (backup, patching, hardening, monitoring) depends on this foundation being solid.
+This phase establishes the foundation for the entire lab environment: a segmented network with centralized identity management that mirrors a real business IT infrastructure. Every subsequent phase (backup, patching, hardening, monitoring) depends on this foundation being solid.
 
 ## Network Design
 
@@ -19,7 +19,7 @@ This phase establishes the foundation for the entire lab environment: a segmente
 | Host | IP Address | Role | OS |
 |---|---|---|---|
 | pfSense | 192.168.10.1 | Gateway, firewall, DHCP server | FreeBSD (pfSense CE) |
-| DC01 | 192.168.10.10 | Domain controller, DNS, NTP | Windows Server 2022 |
+| DC01 | 192.168.10.10 | Domain controller, DNS | Windows Server 2022 |
 | SRV-LINUX01 | 192.168.10.20 | Linux application server | Ubuntu Server 24.04 LTS |
 | BKP01 | 192.168.10.30 | Backup server (Veeam B&R) | Windows Server 2022 |
 | WIN11-CLIENT | 192.168.10.103 | User workstation (DHCP reservation) | Windows 11 Enterprise |
@@ -59,7 +59,6 @@ The build order matters because of dependencies:
 - **Domain:** lab.local
 - **Domain controller:** DC01.lab.local
 - **DNS:** Integrated with AD DS (DC01 serves as primary DNS for the LAN)
-- **NTP:** DC01 configured as authoritative time source, syncing from time.windows.com and pool.ntp.org; all domain members sync from DC01
 
 ### Group Policy Objects
 
@@ -99,19 +98,3 @@ network:
 - OpenSSH server installed and listening on port 22 (all interfaces)
 - Hostname set via `hostnamectl set-hostname srv-linux01`
 - `labadmin` user with sudo privileges (used for Veeam agent deployment via SSH)
-
-## Verification Checklist
-
-After completing Phase 1, all of the following should pass:
-
-- [ ] pfSense WAN has a DHCP address from VMware NAT
-- [ ] pfSense LAN is at 192.168.10.1 with DHCP serving .100–.200
-- [ ] DC01 is at 192.168.10.10 and serving DNS for lab.local
-- [ ] All domain-joined machines can resolve lab.local via nslookup
-- [ ] SRV-LINUX01 is at 192.168.10.20 with static IP via netplan
-- [ ] BKP01 is at 192.168.10.30 and domain-joined
-- [ ] WIN11-CLIENT is domain-joined and receiving DHCP reservation
-- [ ] All machines can ping each other (ICMP enabled via GPO)
-- [ ] All machines can ping 8.8.8.8 (internet access via pfSense NAT)
-- [ ] All machines can resolve google.com (DNS forwarding working)
-- [ ] VMware snapshots taken for all VMs at this milestone
