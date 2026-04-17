@@ -94,6 +94,13 @@ A hands-on infrastructure project simulating a business IT environment with ente
 - NTFS formatted with default allocation unit size
 - Veeam deduplication and compression achieving approximately 1.6x reduction ratio (13.5 GB source → 8.6 GB stored)
 
+*Veeam backup job completed successfully — 13.5 GB processed with 1.6x compression:*
+
+<p align="center">
+<img width="817" height="547" alt="image" src="https://github.com/user-attachments/assets/0caa3320-b50a-4204-b562-557a2e88bfec" />
+</p>
+
+
 **AWS S3 Immutable Cloud Tier**
 - S3 bucket with Object Lock enabled at creation (cannot be disabled retroactively)
 - Bucket versioning enabled (required for Object Lock)
@@ -102,15 +109,21 @@ A hands-on infrastructure project simulating a business IT environment with ente
 - 14-day Object Lock retention: backup objects cannot be modified or deleted within the retention window, even by administrators with full account access
 - Veeam Backup Copy Job configured in Immediate Copy mode — new restore points replicate to S3 as soon as primary backup completes
 - Backup file encryption enabled with a password-protected key stored separately from the backup infrastructure
-- Verified immutability: attempted manual deletion of backup objects in the AWS Console was blocked by Object Lock retention policy
 
-**Immutability Verification**
+_Veeam backup copy job completed successfully to S3 Bucket (AWS) - 13.5 GB processed:_
+<p align="center">
+<img width="703" height="412" alt="image" src="https://github.com/user-attachments/assets/e50d54f7-fe77-4fe8-9244-26d20b67638e" />
 
-Attempted to delete a backup object from the S3 console after a successful Backup Copy Job. AWS returned:
+_S3 Bucket (AWS):_
+<img width="772" height="128" alt="image" src="https://github.com/user-attachments/assets/5b1e030a-49de-453c-9c5c-06150c2d2d64" />
 
-> *"Cannot delete object: Object is locked by retention policy"*
 
-This confirms that even with full administrative access to the AWS account, backup data cannot be tampered with during the 14-day retention window — the core protection against ransomware actors who target backup infrastructure.
+_Verified data upload via CLI command:_
+
+aws s3 ls s3://veeam-lab-backup-david-2026 --recursive --human-readable --summarize
+<img width="1050" height="196" alt="image" src="https://github.com/user-attachments/assets/0442381c-a76c-4369-a88b-5291124d1469" />
+</p>
+
 
 ### Cost Analysis
 
