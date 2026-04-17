@@ -1,0 +1,31 @@
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Sensitive files — NEVER commit these
+*.pem
+*.key
+*.pfx
+*.p12
+credentials.json
+aws-credentials.txt
+*secret*
+*password*
+
+# Backup files (too large for Git)
+*.vbk
+*.vib
+*.vbm
+*.vmdk
+*.iso
+
+# Log files
+*.log
