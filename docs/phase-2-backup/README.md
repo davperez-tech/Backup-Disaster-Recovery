@@ -32,9 +32,9 @@ Primary Backup Job           Stored as .vbk/.vib          Backup Copy Job
 
 ### Installation
 
-- **Version:** Veeam Backup & Replication v13 (Community Edition — 10 workload limit)
+- **Version:** Veeam Backup & Replication
 - **Server:** BKP01 (192.168.10.30)
-- **Database:** Bundled PostgreSQL (default for Veeam v12+)
+- **Database:** Bundled PostgreSQL
 - **Service account:** Local System
 - **Console access:** localhost on BKP01
 
@@ -178,15 +178,14 @@ Billing alarm configured at $10/month threshold.
 
 See [Restore Drill Results](../../README.md#restore-drill-results) in the main README and detailed runbooks in [runbooks/](../../runbooks/).
 
-## Troubleshooting Reference
+## Troubleshooting 
 
 ### Common Issues Encountered and Resolved
 
 | Issue | Root Cause | Resolution |
 |---|---|---|
 | "Failed to connect to backup server localhost" | Veeam services not fully started after boot | Wait 3-5 minutes after login; or manually start Veeam Backup Service and PostgreSQL |
-| "Time discrepancy between gateway and server" (S3) | BKP01 clock drift (common with VMs) | Force time sync: `w32tm /resync /force`; configure NTP on DC01 as authoritative source |
+| "Time discrepancy between gateway and server" (S3) | BKP01 clock drift | Force time sync: `w32tm /resync /force`; configure NTP on DC01 as authoritative source |
 | "Check if specified account has required permissions" (S3) | IAM user missing s3:ListAllMyBuckets permission | Added AmazonS3FullAccess; later refined to custom policy including ListAllMyBuckets on Resource: * |
 | "Not authorized to perform iam:CreateUser" | Veeam auto-provisions IAM service accounts for agents | Added IAMFullAccess; later refined to custom policy scoped to vbrsvcacc-* users |
-| "Workstation already assigned to backup policy" | Machine already in another backup job (one-job-per-agent rule) | Removed machine from existing job before adding to new one |
 | Win11 unreachable for agent deployment | Windows Firewall blocking SMB/RPC + LocalAccountTokenFilterPolicy | Enabled File and Printer Sharing, WMI, Remote Service Management across all profiles; set LocalAccountTokenFilterPolicy=1 for local accounts |
