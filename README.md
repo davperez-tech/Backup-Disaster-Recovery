@@ -1,6 +1,6 @@
-# Secure Small Business Infrastructure Lab — Backup & Disaster Recovery
+# Infrastructure Lab — Backup & Disaster Recovery
 
-A hands-on infrastructure project simulating a small business IT environment with enterprise-grade backup, disaster recovery, and ransomware-resilient architecture. Built on VMware Workstation with segmented networking, Active Directory, and a full 3-2-1 backup implementation using Veeam Backup & Replication and AWS S3 with Object Lock immutability.
+A hands-on infrastructure project simulating a business IT environment with enterprise-grade backup and disaster recovery architecture. Built on VMware Workstation with segmented networking, Active Directory, and a full 3-2-1 backup implementation using Veeam Backup & Replication and AWS S3 with Object Lock immutability.
 
 ---
 
@@ -8,14 +8,14 @@ A hands-on infrastructure project simulating a small business IT environment wit
 
 | Component | Detail |
 |---|---|
-| **Environment** | VMware Workstation Pro (nested virtualization) |
+| **Environment** | VMware Workstation |
 | **Operating Systems** | Windows Server 2022, Windows 11 Enterprise, Ubuntu Server 24.04 LTS |
 | **Network** | Segmented VLANs via pfSense CE — WAN, LAN (servers), Management |
-| **Identity** | Active Directory Domain Services (`lab.local`) with DNS and Group Policy |
+| **Identity** | Active Directory Domain Services with DNS and Group Policy |
 | **Backup Platform** | Veeam Backup & Replication v13 Community Edition |
-| **Cloud Tier** | AWS S3 with Object Lock (14-day immutable retention) |
+| **Cloud Tier** | AWS S3 with Object Lock |
 | **Backup Strategy** | 3-2-1: production data + local repository + immutable off-site cloud |
-| **Validation** | File-level restore, bare-metal recovery, and simulated ransomware recovery drills |
+| **Validation** | File-level restore and bare-metal recovery recovery drills |
 
 ---
 
@@ -61,28 +61,16 @@ A hands-on infrastructure project simulating a small business IT environment wit
 
 ## Table of Contents
 
-- [Motivation](#motivation)
 - [Phase 1 — Network Infrastructure & Active Directory](#phase-1--network-infrastructure--active-directory)
 - [Phase 2 — Backup, Cloud Replication & Disaster Recovery](#phase-2--backup-cloud-replication--disaster-recovery)
 - [Restore Drill Results](#restore-drill-results)
 - [Lessons Learned & Incidents](#lessons-learned--incidents)
-- [Skills Demonstrated](#skills-demonstrated)
-- [Repository Structure](#repository-structure)
-- [Related Projects](#related-projects)
-
----
-
-## Motivation
-
-System administrator and cybersecurity job postings consistently list backup management, patch compliance, and configuration hardening as core responsibilities. Rather than only studying these topics, I built a working environment from scratch that mirrors a real small business IT infrastructure — then attacked it and recovered from the attack.
-
-This project exists to demonstrate hands-on competence with the tools, architectures, and operational disciplines that enterprise IT teams rely on daily.
 
 ---
 
 ## Phase 1 — Network Infrastructure & Active Directory
 
-**Objective:** Build a segmented, domain-joined network environment that mirrors a real small business with proper routing, DNS, DHCP, and centralized identity management.
+**Objective:** Build a segmented, domain-joined network environment that mirrors a real business with proper routing, DNS, DHCP, and centralized identity management.
 
 ### What Was Built
 
@@ -123,7 +111,7 @@ This project exists to demonstrate hands-on competence with the tools, architect
 |---|---|---|---|
 | **Copy 1** | Production VMs | Live data | VMware Workstation guest disks |
 | **Copy 2** | Local repository (`E:\Backups` on BKP01) | Fast restore — sub-10-minute RTO for file-level recovery | Veeam B&R v13, agent-based, entire-computer image backup |
-| **Copy 3** | AWS S3 with Object Lock | Ransomware-resistant off-site — 14-day immutable retention | Veeam Backup Copy Job, chunked object storage, encrypted in transit and at rest |
+| **Copy 3** | AWS S3 with Object Lock | Ransomware-resistant off-site | Veeam Backup Copy Job, chunked object storage, encrypted in transit and at rest |
 
 ### Backup Implementation
 
@@ -194,19 +182,6 @@ Backups that are never tested are not backups — they are assumptions. Three re
 | **Method** | Veeam Recovery Media ISO → bare-metal restore to new VM |
 | **Recovery Time** | < 60 minutes |
 | **Outcome** | Hostname, IP, OS, SSH service all verified post-restore; machine fully operational |
-
-### Drill 3: Ransomware Simulation & Recovery
-
-| Metric | Result |
-|---|---|
-| **Scenario** | Simulated ransomware encrypted 4 files on WIN11-CLIENT and dropped a ransom note |
-| **Attack Method** | PowerShell script overwriting file contents and appending `.encrypted` extension |
-| **Source** | Pre-attack backup from local Veeam repository (Copy 2) |
-| **Method** | Veeam Backup Browser → file-level restore of original clean files |
-| **Recovery Time** | < 15 minutes |
-| **Outcome** | All 4 files recovered with original content intact; ransom note removed |
-| **Key Finding** | Immutable S3 backup tier was completely unaffected by simulated attack, confirming off-site backup integrity |
-
 > **Detailed runbooks with step-by-step instructions:** [runbooks/](runbooks/)
 
 ---
@@ -232,99 +207,13 @@ Domain-joined Windows machines intermittently classified their network connectio
 
 **Resolution:** Deployed a Group Policy Object (`Lab-Firewall-Allow-ICMP`) that enables ICMP Echo Request across all firewall profiles (Domain, Private, and Public), ensuring consistent behavior regardless of profile classification.
 
-### AWS Clock Synchronization
+### AWS IAM Permissions and Least-Privilege Progression
 
-Veeam S3 operations failed with "time discrepancy between the gateway and the server." AWS Signature V4 authentication requires client clocks within 5 minutes of AWS servers.
+Veeam failed to browse S3 buckets during repository configuration, returning "check if the specified account has required permissions." After resolving that by adding s3:ListAllMyBuckets (which requires Resource: "*" because listing buckets is an account-wide operation, not bucket-scoped), a second error appeared during backup copy jobs: "not authorized to perform iam:CreateUser." Veeam auto-provisions dedicated IAM service accounts (prefixed vbrsvcacc-*) for agent-to-S3 communication, and the backup IAM user lacked permissions to create them.
 
-**Takeaway:** Time synchronization is a silent dependency for authentication, Kerberos, TLS, and log correlation. Configure NTP on every server, especially VMs.
+**Takeaway:** Takeaway: Least-privilege in cloud environments is an iterative process, not a one-shot configuration. Starting with broad permissions to validate functionality, then tightening based on observed API calls and error messages, is standard practice in production cloud security. Understanding which API actions a tool actually performs and at what resource scope, is the core skill behind effective IAM policy authoring.
 
-**Resolution:** Configured DC01 as authoritative NTP source syncing from `time.windows.com` and `pool.ntp.org`; all domain members sync from DC01.
-
----
-
-## Skills Demonstrated
-
-### Infrastructure & Networking
-- Network segmentation with VLANs and firewall routing (pfSense)
-- Active Directory Domain Services deployment and management
-- DNS, DHCP, and Group Policy configuration
-- Static IP management, DHCP reservations, and netplan (Linux)
-- Windows and Linux server administration
-- VMware Workstation virtualization
-
-### Backup & Disaster Recovery
-- Veeam Backup & Replication deployment and configuration
-- Agent-based backup across Windows and Linux
-- 3-2-1 backup architecture design and implementation
-- Backup Copy Jobs for off-site replication
-- Image-level (bare-metal) and file-level restore procedures
-- Restore drill execution, timing, and documentation
-- Ransomware simulation and recovery validation
-
-### Cloud & Security
-- AWS S3 bucket configuration with Object Lock immutability
-- IAM user provisioning with least-privilege custom policies
-- Backup encryption for cloud-tier data
-- Cost analysis and billing alarm configuration
-- NTP/time synchronization for authentication integrity
-
-### Operational Practices
-- Incident documentation and post-mortem analysis
-- Runbook authoring for repeatable recovery procedures
-- VMware snapshot management for rollback capability
-- Systematic troubleshooting methodology (OSI model, dependency chain analysis)
-
----
-
-## Repository Structure
-
-```
-├── README.md                              ← You are here
-├── docs/
-│   ├── phase-1-infrastructure/
-│   │   ├── README.md                      ← Phase 1 detailed documentation
-│   │   ├── network-design.md              ← IP scheme, VLAN layout, routing
-│   │   ├── active-directory-setup.md      ← AD DS, DNS, GPO configuration
-│   │   └── linux-server-setup.md          ← Ubuntu netplan, SSH, domain integration
-│   └── phase-2-backup/
-│       ├── README.md                      ← Phase 2 detailed documentation
-│       ├── veeam-installation.md          ← Veeam B&R install and repository setup
-│       ├── agent-deployment.md            ← Protection groups and agent deployment
-│       ├── aws-s3-setup.md                ← S3 bucket, Object Lock, IAM configuration
-│       └── backup-copy-job.md             ← Backup Copy Job to S3 configuration
-├── runbooks/
-│   ├── file-level-restore.md              ← Runbook: restoring individual files
-│   ├── bare-metal-restore.md              ← Runbook: full server recovery to new hardware
-│   └── ransomware-recovery.md             ← Runbook: simulated attack recovery procedure
-├── scripts/
-│   ├── ransomware-simulation.ps1          ← PowerShell script used in Drill 3
-│   ├── check-veeam-services.ps1           ← Veeam service health check script
-│   └── enable-icmp-all-profiles.ps1       ← Firewall rule deployment script
-├── diagrams/
-│   └── network-architecture.drawio        ← Editable network diagram (draw.io format)
-└── screenshots/
-    ├── phase-1/                           ← Infrastructure build evidence
-    └── phase-2/                           ← Backup job success, S3 verification, restore drills
-```
-
----
-
-## Related Projects
-
-This project is part of a series of infrastructure labs demonstrating enterprise system administration practices:
-
-- **Secure Network Infrastructure & Backup** — *(this repository)*
-- **Automated Patch Management** — Ring-based patching with WSUS + Ansible + Nessus validation *(coming soon)*
-- **CIS Benchmark Hardening** — Infrastructure-as-code compliance with Ansible + OpenSCAP *(coming soon)*
-- **Infrastructure Monitoring & SIEM** — Centralized monitoring with Zabbix/Grafana + Wazuh *(coming soon)*
-
----
-
-## About
-
-Built by David as a professional development project while pursuing system administrator and cybersecurity roles. The goal was to go beyond certifications and demonstrate hands-on competence with the tools, architectures, and operational disciplines used in real enterprise environments.
-
-If you have questions about this project or want to discuss the implementation, feel free to open an issue or connect with me on [LinkedIn](your-linkedin-url).
+**Resolution:** Initially attached AmazonS3FullAccess and IAMFullAccess managed policies to unblock functionality and validate the end-to-end backup pipeline. Once the backup copy jobs were confirmed working, refined permissions to a custom IAM policy with three scoped statements: bucket listing on Resource: "*", full S3 operations restricted to the specific backup bucket ARN, and IAM user management restricted to the vbrsvcacc-* naming pattern.
 
 ---
 
