@@ -20,9 +20,9 @@ A hands-on infrastructure project simulating a business IT environment with ente
 ---
 
 ## Architecture
-
-<img width="534" height="457" alt="Lab Diagram (1)" src="https://github.com/user-attachments/assets/c16e7de3-6283-477f-916a-b279315eb06c" />
-
+<p align="center">
+  <img width="534" height="457" alt="Lab Diagram (1)" src="https://github.com/user-attachments/assets/c16e7de3-6283-477f-916a-b279315eb06c" />
+</p>
 
 ---
 
