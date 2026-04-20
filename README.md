@@ -1,4 +1,4 @@
-# Infrastructure Lab — Backup & Disaster Recovery
+# Infrastructure Lab - Backup & Disaster Recovery
 
 A hands-on infrastructure project simulating a business IT environment with enterprise-grade backup and disaster recovery architecture. Built on VMware Workstation with segmented networking, Active Directory, and a full 3-2-1 backup implementation using Veeam Backup & Replication and AWS S3 with Object Lock immutability.
 
