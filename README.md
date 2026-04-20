@@ -170,7 +170,7 @@ _*Veeam inventory showing all Windows OS protected machines with agents deployed
 
 | Metric | Result |
 |---|---|
-| **Scenario** | SRV-LINUX01 total loss — restore to empty replacement hardware |
+| **Scenario** | Windows 11 total loss — restore to empty replacement hardware |
 | **Source** | Local Veeam repository (Copy 2) |
 | **Method** | Veeam Recovery Media ISO → bare-metal restore to new VM |
 | **Recovery Time** | < 60 minutes |
