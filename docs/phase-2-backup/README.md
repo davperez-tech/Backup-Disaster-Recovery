@@ -154,14 +154,6 @@ Veeam does not store traditional `.vbk` files in S3. Instead, backup data is bro
 - Total Size: ~14.8 GB
 - Verified via `aws s3 ls --recursive --summarize`
 
-### Immutability Verification
-
-Attempted manual deletion of a backup object via AWS Console. Result:
-
-> "Cannot delete object: Object is locked by retention policy"
-
-This confirms the immutability guarantee: backup data cannot be modified or deleted within the 14-day retention window, even by administrators with full AWS account access.
-
 ### Cost Analysis
 
 | Resource | Monthly Cost |
