@@ -43,7 +43,7 @@ Use this procedure when a server has suffered total loss (hardware failure, unre
 
 ### Step 4: Select Backup and Restore Point
 
-9. Browse the available backups and select the target machine (e.g., SRV-LINUX01)
+9. Browse the available backups and select the target machine
 10. Select the most recent restore point (or a specific point-in-time if recovering from a known-good state before an incident)
 11. Click **Next**
 
@@ -115,10 +115,3 @@ ping 8.8.8.8                 # Internet access
 | Disk mapping fails | Target disk too small | Use a disk equal to or larger than the source |
 | Restored machine won't boot | Driver incompatibility (rare with VMs, common with physical) | Boot into recovery mode and install drivers; or try a different VM hardware version |
 | IP conflict after restore | Original machine still running | Shut down one of the two machines immediately |
-
-## Notes
-
-- Bare-metal restore from local repository (Copy 2) is faster than from S3 (Copy 3) due to bandwidth
-- For restoring from S3, select the backup under Object Storage in the recovery wizard — the process is identical but slower
-- Keep the Veeam Recovery Media ISO in a safe, accessible location — you need it before you can start the restore, so store it outside the environment being protected (host machine, USB drive, or cloud storage)
-- After a successful bare-metal restore, run a new backup of the restored machine immediately to establish a fresh restore point
