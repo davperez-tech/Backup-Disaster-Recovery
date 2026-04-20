@@ -174,7 +174,7 @@ _*Veeam inventory showing all Windows OS protected machines with agents deployed
 | **Source** | Local Veeam repository (Copy 2) |
 | **Method** | Veeam Recovery Media ISO → bare-metal restore to new VM |
 | **Recovery Time** | < 60 minutes |
-| **Outcome** | Hostname, IP, OS, SSH service all verified post-restore; machine fully operational |
+| **Outcome** | Hostname, IP, OS all verified post-restore; machine fully operational |
 
 *Windows 11 - Restored verified operational after bare-metal restore:*
 <p align="center">
