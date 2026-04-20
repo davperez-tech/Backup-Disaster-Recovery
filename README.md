@@ -15,7 +15,7 @@ A hands-on infrastructure project simulating a business IT environment with ente
 | **Backup Platform** | Veeam Backup & Replication v13 Community Edition |
 | **Cloud Tier** | AWS S3 with Object Lock |
 | **Backup Strategy** | 3-2-1: production data + local repository + immutable off-site cloud |
-| **Validation** | File-level restore and bare-metal recovery recovery drills |
+| **Validation** | File-level restore and bare-metal recovery drills |
 
 ---
 
