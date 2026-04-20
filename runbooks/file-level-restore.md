@@ -20,7 +20,7 @@ Use this procedure when one or more files need to be recovered from a Veeam back
 
 1. Open the Veeam Backup & Replication console on BKP01
 2. Navigate to **Home → Backups → Disk** (for local repository) or **Home → Backups → Object Storage** (for S3 cloud tier)
-3. Locate the backup for the target machine (e.g., DC01, WIN11-CLIENT, SRV-LINUX01)
+3. Locate the backup for the target machine
 4. Note the available restore points (dates/times) — you need the most recent point that contains the file in its pre-incident state
 
 ### Step 2: Launch File-Level Restore
@@ -28,7 +28,7 @@ Use this procedure when one or more files need to be recovered from a Veeam back
 5. Right-click on the target machine's backup entry
 6. Select **Restore guest files → Microsoft Windows** (for Windows machines) or **Restore guest files → Linux and other** (for Linux machines)
 7. **Restore Point screen:** Select the appropriate restore point date/time
-8. **Reason screen:** Enter a description (e.g., "Restoring accidentally deleted report file")
+8. **Reason screen:** Enter a description
 9. Click **Finish**
 
 ### Step 3: Browse and Restore
@@ -59,9 +59,3 @@ Use this procedure when one or more files need to be recovered from a Veeam back
 | File not found in backup | File was created after the restore point | Select an older restore point, or check if a more recent backup exists |
 | "Access denied" during restore | Insufficient permissions on target path | Run Veeam console as Administrator; verify NTFS permissions on target folder |
 | Restore is very slow | Large backup or network congestion | Normal for multi-GB backups; wait for completion |
-
-## Notes
-
-- File-level restore from local repository (Copy 2) is significantly faster than from S3 (Copy 3) because local disk reads are faster than cloud downloads
-- For restoring from S3, the same procedure applies but select the backup under **Backups → Object Storage** instead of **Backups → Disk**
-- If many files need restoring across multiple folders, consider a volume-level or full VM restore instead
